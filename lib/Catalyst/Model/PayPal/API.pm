@@ -7,6 +7,8 @@ use Business::PayPal::API;
 
 use parent 'Catalyst::Model';
 
+our $VERSION = 0.1;
+
 #__PACKAGE__->config(
 #            Username   => 'your paypal username',
 #            Password   => 'ABCDEF',  ## supplied by PayPal

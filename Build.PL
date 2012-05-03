@@ -12,8 +12,8 @@ my $build = Module::Build->new(
         'Business::PayPal::API' => 0,
         'Catalyst::Model' => 0,
     },
-#    build_requires => {
-#        'Test::Trap' => 0,
-#    },
+    build_requires => {
+        'Test::More' => 0,
+    },
 );
 $build->create_build_script();
