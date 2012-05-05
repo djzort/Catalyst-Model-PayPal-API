@@ -8,7 +8,7 @@ use parent 'Catalyst::Model';
 
 use Business::PayPal::API;
 
-our $VERSION = '0.1';
+our $VERSION = '0.2';
 
 =head1 NAME
 
@@ -88,9 +88,11 @@ details on which options you want to use here.
 
 =cut
 
-Other features as previously, here are two others.
-
 =over 4
+
+=item Username, Password, sandbox, subclasses
+
+As described previously
 
 =item CertFile
 
@@ -118,6 +120,10 @@ Location of the KeyFile
   );
 
 =over 4
+
+=item Username, Password, sandbox, subclasses
+
+As described previously
 
 =item PKCS12File
 
@@ -243,7 +249,7 @@ to PayPal to make their purchases. You just concatenate their token
 to the end and redirect!
 
 This function knows about the sandbox setting, which is also very convenient
-though when testing. But remember that you provide to PayPal the return URL,
+ when testing. But remember that you provide to PayPal the return URL,
 so you'll need to match it with your production and testing environments
 independant on your own!
 
