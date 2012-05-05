@@ -1,4 +1,5 @@
 package Catalyst::Model::PayPal::API;
+# ABSTRACT: A Catalyst Model for PayPal via Business::PayPal::API
 
 use strict;
 use warnings;
