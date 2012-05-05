@@ -4,19 +4,146 @@ package Catalyst::Model::PayPal::API;
 use strict;
 use warnings;
 
-use Business::PayPal::API;
-
 use parent 'Catalyst::Model';
 
-our $VERSION = 0.1;
+use Business::PayPal::API;
 
-#__PACKAGE__->config(
-#            Username   => 'your paypal username',
-#            Password   => 'ABCDEF',  ## supplied by PayPal
-#            Signature  => 'xyz',  ## ditto
-#            sandbox    => 0 || 1,
-#            subclasses => [qw( ExpressCheckout GetTransactionDetails )],
-#);
+our $VERSION = '0.1';
+
+=head1 NAME
+
+Catalyst::Model::PayPal::API - PayPal Model for Catalyst
+
+=head1 WARNING
+
+Although I have been using this model for over 12 months in production,
+and it has processed over $10,000 in sales - please test thoroughly
+before risking your livelyhood on it!
+
+This module is really only a layer between Catalyst::Model and
+Business::PayPal::API, any problems will PayPall are probably problems
+with the underlying module.
+
+=head1 SYNOPSIS
+
+=head2 3-token (Signature) authentication
+
+  package 'Your::Model::PayPal';
+  use parent 'Catalyst::Model::PayPal::API';
+
+  __PACKAGE__->config(
+      Username   => 'your paypal username',
+      Password   => 'ABCDEF',  ## supplied by PayPal
+      Signature  => 'xyz',     ## ditto
+      sandbox    => 0 || 1,    ## Use sandbox or production API
+      subclasses => [qw( ExpressCheckout GetTransactionDetails )],
+                               ## Which functions to use
+  );
+
+=over 4
+
+=item Username
+
+Your paypal API username
+
+=item Password
+
+As supplied by PayPal
+
+=item Signature
+
+As supplied by PayPal
+
+=item sandbox
+
+If true, uses the sandbox apis rather than production APIs
+
+Use this for the thorough testing I mentioned above.
+
+=item subclasses
+
+Business::PayPal::API has a custom import() function which you must
+instruct to load which every API functions you want to use. This sounds
+less strange than it is.
+
+Regardless, check the documentation for Business::PayPal::API for
+details on which options you want to use here.
+
+=back
+
+=head2 PEM certificate authentication
+
+  package 'Your::Model::PayPal';
+  use parent 'Catalyst::Model::PayPal::API';
+
+  __PACKAGE__->config(
+      Username   => 'your paypal username',
+      Password   => 'ABCDEF',  ## supplied by PayPal
+      CertFile   => '/path/to/file', ## file, supplied by PayPal
+      KeyFile    => '/path/to/file', ## file, supplied by PayPal
+      sandbox    => 0 || 1,    ## Use sandbox or production API
+      subclasses => [qw( ExpressCheckout GetTransactionDetails )],
+                               ## Which functions to use
+  );
+
+=cut
+
+Other features as previously, here are two others.
+
+=over 4
+
+=item CertFile
+
+Location of the CertFile
+
+=item KeyFile
+
+Location of the KeyFile
+
+=back
+
+=head2 Certificate authentication
+
+  package 'Your::Model::PayPal';
+  use parent 'Catalyst::Model::PayPal::API';
+
+  __PACKAGE__->config(
+      Username    => 'your paypal username',
+      Password    => 'ABCDEF',  ## supplied by PayPal
+      PKCS12File  => '/path/to/file', ## file, supplied by PayPal
+      PKCS12Password => '/path/to/file', ## file, supplied by PayPal
+      sandbox     => 0 || 1,    ## Use sandbox or production API
+      subclasses  => [qw( ExpressCheckout GetTransactionDetails )],
+                                ## Which functions to use
+  );
+
+=over 4
+
+=item PKCS12File
+
+Location of the PKCS12File
+
+=item PKCS12Password
+
+Location of the PKCS12Password
+
+=back
+
+=head1 DESCRIPTION
+
+This is a Catalyst model for Business::PayPal::API, allowing you to use
+PayPal to bill your clients in your Catalyst application.
+
+When naming this model, I have chosen to drop the 'Business::' so as to
+shorten the name somewhat.
+
+=head1 FUNCTIONS
+
+=head2 new
+
+You don't need to worry about new(), Catalyst uses this all on its own.
+
+=cut
 
 sub new {
 
@@ -106,6 +233,22 @@ sub AUTOLOAD {
 
 }
 
+=head2 redirect_url
+
+
+ $redirect = $c->model('PayPal')->redirect_url() . $token;
+
+This is a convenient function which you can use to redirect your customer
+to PayPal to make their purchases. You just concatenate their token
+to the end and redirect!
+
+This function knows about the sandbox setting, which is also very convenient
+though when testing. But remember that you provide to PayPal the return URL,
+so you'll need to match it with your production and testing environments
+independant on your own!
+
+=cut
+
 sub redirect_url {
 
     my $self = shift;
@@ -117,3 +260,33 @@ sub redirect_url {
 'https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=';
 
 }
+
+
+=head1 SEE ALSO
+
+L<Business::PayPal::API>
+
+=head1 AUTHOR
+
+Dean Hamstead, C<< <dean at fragfest.com.au> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests through the web interface at
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Catalyst-Model-PayPal-API>.
+I will be notified, and then you'll automatically be notified of progress on
+your bug as I make changes.
+
+Please fork and contribute via L<https://github.com/djzort/Catalyst-Model-PayPal-API>
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2012 Dean Hamstead,
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
+=cut
+
+
+1
