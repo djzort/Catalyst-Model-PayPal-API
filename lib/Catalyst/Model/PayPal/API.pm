@@ -1,4 +1,6 @@
+#!/bin/false
 package Catalyst::Model::PayPal::API;
+
 # ABSTRACT: A Catalyst Model for PayPal via Business::PayPal::API
 
 use strict;
@@ -8,7 +10,7 @@ use parent 'Catalyst::Model';
 
 use Business::PayPal::API;
 
-our $VERSION = '0.2';
+our $VERSION = '0.3';
 
 =head1 NAME
 
@@ -25,6 +27,32 @@ Business::PayPal::API, any problems will PayPall are probably problems
 with the underlying module.
 
 =head1 SYNOPSIS
+
+  package YourApp::Model::PayPal;
+  use parent 'Catalyst::Model::PayPal::API';
+  __PACKAGE->config(%paypal_account_details);
+  1
+
+  package YourApp::Controller::Foo;
+
+  sub index : Path('/') {
+    my ( $self, $c, @args ) = @_;
+
+    my %resp = $c->model('PayPal')->SetExpressCheckout(%options);
+
+    if ( $resp{Ack} eq 'Success' ) {
+      # save the various details in a database or something, then redirect
+
+	$c->response->redirect(
+	    $c->model('PayPal')->redirect_url() . $resp{Token} );
+
+    } else {
+      # handle the error details, see Business::PayPal::API
+    }
+  }
+  1
+
+=head1 USAGE
 
 =head2 3-token (Signature) authentication
 
@@ -62,12 +90,13 @@ Use this for the thorough testing I mentioned above.
 
 =item subclasses
 
-Business::PayPal::API has a custom import() function which you must
-instruct to load which every API functions you want to use. This sounds
-less strange than it is.
+L<Business::PayPal::API> has a custom import() function which you must
+instruct to load which ever API functions you want to use. This sounds
+less strange than it is. See B<Business::PayPal::API::*> for which
+API options can be loaded.
 
-Regardless, check the documentation for Business::PayPal::API for
-details on which options you want to use here.
+Check the documentation for L<Business::PayPal::API> for details on which 
+options you want to use here.
 
 =back
 
@@ -241,7 +270,6 @@ sub AUTOLOAD {
 
 =head2 redirect_url
 
-
  $redirect = $c->model('PayPal')->redirect_url() . $token;
 
 This is a convenient function which you can use to redirect your customer
@@ -267,6 +295,10 @@ sub redirect_url {
 
 }
 
+=head1 ERROR HANDLING
+
+As per L<Busines::PayPal::API>, errors are in the %resp returned when functions are 
+called.
 
 =head1 SEE ALSO
 
@@ -293,6 +325,5 @@ This program is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.
 
 =cut
-
 
 1
