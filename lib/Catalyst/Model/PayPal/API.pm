@@ -10,7 +10,7 @@ use parent 'Catalyst::Model';
 
 use Business::PayPal::API;
 
-our $VERSION = '0.3';
+our $VERSION = '0.31';
 
 =head1 NAME
 
